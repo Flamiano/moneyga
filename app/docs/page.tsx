@@ -127,6 +127,7 @@ export default function DocsPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
+            className="min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 selection:bg-emerald-100 dark:selection:bg-emerald-900/30 overflow-x-hidden"
           >
             <header className="mb-12">
               <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-slate-950 dark:text-white mb-6 leading-[1.1]">
