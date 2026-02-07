@@ -438,8 +438,7 @@ export default function DocsPage() {
     <div className="flex min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-x-hidden font-sans">
       <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
 
-      {/* MODIFIED: Pass the state and close function to the Sidebar
-       */}
+      {/* LEFT SIDEBAR */}
       <DocsSidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -447,8 +446,10 @@ export default function DocsPage() {
         onClose={() => setIsMobileMenuOpen(false)}
       />
 
-      <main className="flex-1 lg:pl-72 xl:pr-80 pt-16">
-        <div className="max-w-4xl mx-auto py-12 px-6 lg:px-12">
+      {/* MAIN CONTENT AREA - Centered Logic */}
+      <main className="flex-1 flex justify-center pt-16 lg:pl-72 xl:pr-80">
+        {/* max-w-4xl and mx-auto ensures the content stays centered and readable */}
+        <div className="w-full max-w-4xl py-12 px-6 lg:px-12">
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-8">
             <Link
@@ -465,8 +466,8 @@ export default function DocsPage() {
         </div>
       </main>
 
-      {/* --- TABLE OF CONTENTS (RIGHT SIDEBAR) --- */}
-      <aside className="fixed right-0 top-16 w-80 h-[calc(100vh-64px)] py-12 px-8 hidden xl:block border-l border-slate-100 dark:border-white/5">
+      {/* RIGHT SIDEBAR (Table of Contents) */}
+      <aside className="fixed right-0 top-16 w-80 h-[calc(100vh-64px)] py-12 px-8 hidden xl:block border-l border-slate-100 dark:border-white/5 bg-white/50 dark:bg-[#0a0a0a]/50 backdrop-blur-sm">
         <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6">
           On this page
         </h4>
