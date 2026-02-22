@@ -17,12 +17,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-/**
- * 1. SEARCH REGISTRY
- * Updated to match TOC_CONFIG IDs and Project Proposal details
- */
+// ... (SEARCHABLE_PAGES remains the same)
 const SEARCHABLE_PAGES = [
-  // Overview Section
   {
     title: "Introduction to MoneyGa",
     path: "/docs#introduction",
@@ -41,7 +37,6 @@ const SEARCHABLE_PAGES = [
     category: "Overview",
     keywords: "postgresql, rls, vault, security, data protection",
   },
-  // Quick Start Section
   {
     title: "Installation Guide",
     path: "/docs#installation",
@@ -54,7 +49,6 @@ const SEARCHABLE_PAGES = [
     category: "Quick Start",
     keywords: "constraints, manual entry, no bank sync",
   },
-  // Project Scope Section
   {
     title: "Project Goals",
     path: "/docs#goals",
@@ -67,7 +61,6 @@ const SEARCHABLE_PAGES = [
     category: "Project Scope",
     keywords: "nextjs, supabase, tailwind, framer motion",
   },
-  // Main Pages
   {
     title: "Financial Analytics",
     path: "/analytics",
@@ -98,16 +91,13 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   const [mounted, setMounted] = useState(false);
   const [time, setTime] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<typeof SEARCHABLE_PAGES>(
-    []
-  );
+  const [searchResults, setSearchResults] = useState<typeof SEARCHABLE_PAGES>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const pathname = usePathname();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // PH Time Logic
   useEffect(() => {
     const updateTime = () => {
       const phTime = new Intl.DateTimeFormat("en-US", {
@@ -124,7 +114,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     return () => clearInterval(timer);
   }, []);
 
-  // Theme & Click Outside Setup
   useEffect(() => {
     setMounted(true);
     const savedTheme = localStorage.getItem("theme");
@@ -150,7 +139,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark, mounted]);
 
-  // Search Logic
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setSearchResults([]);
@@ -167,21 +155,30 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
   const toggleTheme = () => setIsDark((prev) => !prev);
 
-  /**
-   * Enhanced Navigation Logic
-   * Handles smooth scrolling for anchor IDs (#)
-   */
-  const handleSearchNavigation = (path: string) => {
+  // Reusable navigation handler for anchor tags
+  const handleAnchorNavigation = (path: string) => {
     router.push(path);
     setIsSearchFocused(false);
     setSearchQuery("");
+    setIsOpen(false); // Close mobile menu if open
 
     if (path.includes("#")) {
       const id = path.split("#")[1];
       setTimeout(() => {
         const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      }, 150);
+        if (el) {
+          const offset = 100; // Account for fixed navbar
+          const bodyRect = document.body.getBoundingClientRect().top;
+          const elementRect = el.getBoundingClientRect().top;
+          const elementPosition = elementRect - bodyRect;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 300); // Slight delay for page transition
     }
   };
 
@@ -242,7 +239,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 
           {/* Right Tools */}
           <div className="flex items-center gap-3">
-            {/* Clock Display */}
+            {/* Clock */}
             <div className="hidden xl:flex items-center gap-2 px-3 py-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
               <Clock className="w-3.5 h-3.5 text-emerald-500" />
               <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 tabular-nums uppercase tracking-wider">
@@ -250,20 +247,15 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               </span>
             </div>
 
-            {/* Functional Search Bar */}
+            {/* Search */}
             <div className="relative hidden md:block" ref={searchRef}>
               <div
-                className={`flex items-center gap-3 bg-slate-100 dark:bg-white/5 border px-4 py-2 rounded-xl w-64 transition-all duration-300 ${
-                  isSearchFocused
+                className={`flex items-center gap-3 bg-slate-100 dark:bg-white/5 border px-4 py-2 rounded-xl w-64 transition-all duration-300 ${isSearchFocused
                     ? "ring-2 ring-emerald-500/50 border-emerald-500/50 w-80"
                     : "border-slate-200 dark:border-white/10"
-                }`}
-              >
-                <Search
-                  className={`w-4 h-4 ${
-                    isSearchFocused ? "text-emerald-500" : "text-slate-400"
                   }`}
-                />
+              >
+                <Search className={`w-4 h-4 ${isSearchFocused ? "text-emerald-500" : "text-slate-400"}`} />
                 <input
                   type="text"
                   placeholder="Search pages..."
@@ -274,7 +266,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                 />
               </div>
 
-              {/* Search Results Dropdown */}
               <AnimatePresence>
                 {isSearchFocused && searchQuery && (
                   <motion.div
@@ -287,7 +278,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       searchResults.map((result, index) => (
                         <button
                           key={index}
-                          onClick={() => handleSearchNavigation(result.path)}
+                          onClick={() => handleAnchorNavigation(result.path)}
                           className="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl transition-colors group text-left"
                         >
                           <div>
@@ -324,25 +315,17 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                   exit={{ y: -10, opacity: 0 }}
                   transition={{ duration: 0.15 }}
                 >
-                  {isDark ? (
-                    <Sun className="w-5 h-5" />
-                  ) : (
-                    <Moon className="w-5 h-5" />
-                  )}
+                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </motion.div>
               </AnimatePresence>
             </button>
 
-            {/* Hamburger Button */}
+            {/* Hamburger */}
             <button
               onClick={handleHamburgerClick}
               className="lg:hidden p-2 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-colors"
             >
-              {isOpen ? (
-                <X className="w-7 h-7" />
-              ) : (
-                <Menu className="w-7 h-7" />
-              )}
+              {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
@@ -359,12 +342,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           >
             <div className="p-6 space-y-3">
               <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                  Manila, PH
-                </span>
-                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                  {time}
-                </span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Manila, PH</span>
+                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 tabular-nums">{time}</span>
               </div>
 
               <MobileNavLink
@@ -392,8 +371,12 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                 Blogs
               </MobileNavLink>
 
+              {/* UPDATED: Get Started Button for Mobile */}
               <div className="pt-4">
-                <button className="w-full bg-slate-900 dark:bg-emerald-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
+                <button
+                  onClick={() => handleAnchorNavigation('/docs#installation')}
+                  className="w-full bg-slate-950 dark:bg-emerald-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-xl shadow-emerald-500/10"
+                >
                   Get Started <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -406,31 +389,17 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
 }
 
 // Sub-components
-function NavLink({
-  href,
-  children,
-  icon,
-  active,
-}: {
-  href: string;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-  active: boolean;
-}) {
+function NavLink({ href, children, icon, active }: { href: string; children: React.ReactNode; icon: React.ReactNode; active: boolean }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all relative group ${
-        active
-          ? "text-emerald-500 dark:text-emerald-400"
-          : "text-slate-500 dark:text-slate-400 hover:text-emerald-500"
-      }`}
+      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all relative group ${active ? "text-emerald-500 dark:text-emerald-400" : "text-slate-500 dark:text-slate-400 hover:text-emerald-500"
+        }`}
     >
       {icon} {children}
       <span
-        className={`absolute bottom-0 left-4 right-4 h-0.5 bg-emerald-500 transition-transform origin-left duration-300 ${
-          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-        }`}
+        className={`absolute bottom-0 left-4 right-4 h-0.5 bg-emerald-500 transition-transform origin-left duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+          }`}
       />
     </Link>
   );
@@ -441,19 +410,12 @@ function MobileNavLink({ href, children, icon, onClick, active }: any) {
     <Link
       href={href}
       onClick={onClick}
-      className={`flex items-center gap-4 p-4 text-base font-bold rounded-2xl transition-colors border ${
-        active
+      className={`flex items-center gap-4 p-4 text-base font-bold rounded-2xl transition-colors border ${active
           ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
           : "text-slate-800 dark:text-slate-200 border-transparent"
-      }`}
-    >
-      <div
-        className={`p-2 rounded-lg ${
-          active
-            ? "bg-emerald-500 text-white"
-            : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
         }`}
-      >
+    >
+      <div className={`p-2 rounded-lg ${active ? "bg-emerald-500 text-white" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
         {icon}
       </div>
       {children}
