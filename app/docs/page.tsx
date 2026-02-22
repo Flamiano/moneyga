@@ -280,8 +280,6 @@ export default function DocsPage() {
                 </div>
               </div>
             </section>
-
-            <Footer />
           </motion.div>
         );
     }
@@ -299,10 +297,8 @@ export default function DocsPage() {
         onClose={() => setIsMobileMenuOpen(false)}
       />
 
+
       {/* MAIN CONTENT AREA */}
-      {/* 1. Added lg:ml-72 to make room for sidebar only on desktop */}
-      {/* 2. Added xl:mr-80 to account for TOC only on extra large screens */}
-      {/* 3. Removed hardcoded flex-1 and replaced with a better centering structure */}
       <main className="w-full pt-16 lg:ml-72 xl:mr-80 transition-all duration-300">
         <div className="max-w-4xl mx-auto py-12 px-6 md:px-12">
           {/* Breadcrumbs */}
@@ -319,6 +315,7 @@ export default function DocsPage() {
 
           <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
         </div>
+        <Footer />
       </main>
 
       {/* RIGHT SIDEBAR (TOC) */}
@@ -340,16 +337,35 @@ export default function DocsPage() {
 
         <div className="mt-12 pt-8 border-t border-slate-100 dark:border-white/5">
           <div className="bg-slate-50 dark:bg-white/[0.02] p-4 rounded-2xl border border-slate-100 dark:border-white/5 space-y-3">
-            <p className="text-[10px] font-black text-slate-400 uppercase">
-              System Status
-            </p>
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-500">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <div className="flex justify-between items-center">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                System Status
+              </p>
+              <span className="text-[9px] font-bold px-2 py-0.5 bg-slate-200 dark:bg-white/10 rounded-md text-slate-500">
+                v1.0.0
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-500">
+              <div className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </div>
               All Systems Operational
             </div>
-            <button className="w-full flex items-center justify-between gap-2 p-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10px] font-bold transition-all transform active:scale-95">
-              DOWNLOAD APK <Download className="w-3 h-3" />
-            </button>
+
+            <a
+              href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+              download="MoneyGa.apk"
+              className="w-full flex items-center justify-between gap-2 p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-500/10"
+            >
+              DOWNLOAD LATEST APK
+              <Download className="w-3.5 h-3.5 animate-bounce" />
+            </a>
+
+            <p className="text-[9px] text-center text-slate-400 font-medium italic">
+              Optimized for Android 11 and above
+            </p>
           </div>
         </div>
       </aside>
@@ -384,11 +400,10 @@ function TOCLink({
     <a
       href={`#${id}`}
       onClick={handleClick}
-      className={`block py-1.5 text-[11px] font-bold transition-all duration-300 border-l-2 px-4 ${
-        active
-          ? "text-emerald-500 border-emerald-500 bg-emerald-500/5 translate-x-1"
-          : "text-slate-500 border-transparent hover:text-slate-900 dark:hover:text-white"
-      }`}
+      className={`block py-1.5 text-[11px] font-bold transition-all duration-300 border-l-2 px-4 ${active
+        ? "text-emerald-500 border-emerald-500 bg-emerald-500/5 translate-x-1"
+        : "text-slate-500 border-transparent hover:text-slate-900 dark:hover:text-white"
+        }`}
     >
       {children}
     </a>

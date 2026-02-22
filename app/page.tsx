@@ -141,22 +141,28 @@ export default function Home() {
               discipline with MoneyGa's intuitive Android interface.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
-              <button className="group flex items-center justify-center gap-2 bg-slate-950 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95">
-                <Download className="w-5 h-5" /> GET STARTED{" "}
+              {/* Direct Download Link - Styled as a Button */}
+              <a
+                href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                download="MoneyGa.apk"
+                className="group flex items-center justify-center gap-3 bg-slate-950 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 hover:shadow-emerald-500/20"
+              >
+                <Download className="w-5 h-5 group-hover:animate-bounce" />
+                <span className="tracking-tight">GET STARTED</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+              </a>
+
+              {/* Registered Users Count */}
+              <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm">
                 <div className="flex -space-x-2">
-                  {["bg-emerald-500", "bg-blue-500", "bg-amber-500"].map(
-                    (color, i) => (
-                      <div
-                        key={i}
-                        className={`w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 ${color} flex items-center justify-center shadow-sm`}
-                      >
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                    )
-                  )}
+                  {["bg-emerald-500", "bg-blue-500", "bg-amber-500"].map((color, i) => (
+                    <div
+                      key={i}
+                      className={`w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 ${color} flex items-center justify-center shadow-sm`}
+                    >
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  ))}
                 </div>
                 <div className="text-sm font-bold">
                   <span className="text-emerald-600 dark:text-emerald-400">
@@ -333,11 +339,10 @@ export default function Home() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className={`p-3 rounded-xl text-[10px] font-bold flex items-center gap-2 ${
-                      status.type === "success"
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : "bg-red-500/10 text-red-600"
-                    }`}
+                    className={`p-3 rounded-xl text-[10px] font-bold flex items-center gap-2 ${status.type === "success"
+                      ? "bg-emerald-500/10 text-emerald-600"
+                      : "bg-red-500/10 text-red-600"
+                      }`}
                   >
                     {status.type === "success" ? (
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -473,9 +478,13 @@ export default function Home() {
             <h2 className="text-4xl lg:text-6xl font-black mb-8 relative z-10">
               Start your Ipon journey <br /> with MoneyGa.
             </h2>
-            <button className="relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl">
+            <a
+              href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+              download="MoneyGa.apk"
+              className="inline-block relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl"
+            >
               Download for Android
-            </button>
+            </a>
           </div>
         </section>
 
