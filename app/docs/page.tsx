@@ -6,13 +6,12 @@ import {
   Download,
   Code2,
   Database,
-  ShieldCheck,
   Zap,
   BarChart3,
   Users,
   Globe,
   PlayCircle,
-  Lock,
+  Smartphone, 
 } from "lucide-react";
 import Link from "next/link";
 import Navbar from "../comps/navbar/page";
@@ -47,6 +46,7 @@ export default function DocsPage() {
   const [activeSection, setActiveSection] = useState("");
   const [isMounted, setIsMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false); // New: Android state
 
   useEffect(() => {
     const savedTab = localStorage.getItem("moneyga_active_tab");
@@ -54,6 +54,12 @@ export default function DocsPage() {
       setActiveTab(savedTab);
     }
     setIsMounted(true);
+
+    // New: Strict Android Detection
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    if (/android/i.test(userAgent)) {
+      setIsAndroid(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -289,14 +295,13 @@ export default function DocsPage() {
     <div className="flex min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 transition-colors duration-500 overflow-x-hidden font-sans">
       <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
 
-      {/* LEFT SIDEBAR - Ensure it has z-index to cover content on mobile */}
+      {/* LEFT SIDEBAR */}
       <DocsSidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
       />
-
 
       {/* MAIN CONTENT AREA */}
       <main className="w-full pt-16 lg:ml-72 xl:mr-80 transition-all duration-300">
@@ -354,14 +359,22 @@ export default function DocsPage() {
               All Systems Operational
             </div>
 
-            <a
-              href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
-              download="MoneyGa.apk"
-              className="w-full flex items-center justify-between gap-2 p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-500/10"
-            >
-              DOWNLOAD LATEST APK
-              <Download className="w-3.5 h-3.5 animate-bounce" />
-            </a>
+            {/* --- UPDATED: ANDROID ONLY DOWNLOAD BUTTON --- */}
+            {isAndroid ? (
+              <a
+                href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                download="MoneyGa.apk"
+                className="w-full flex items-center justify-between gap-2 p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-500/10"
+              >
+                DOWNLOAD LATEST APK
+                <Download className="w-3.5 h-3.5 animate-bounce" />
+              </a>
+            ) : (
+              <div className="flex items-center gap-2 p-3 bg-slate-100 dark:bg-white/5 text-slate-400 rounded-xl text-[9px] font-bold border border-dashed border-slate-200 dark:border-white/10">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Download available on Android devices</span>
+              </div>
+            )}
 
             <p className="text-[9px] text-center text-slate-400 font-medium italic">
               Optimized for Android 11 and above
@@ -401,8 +414,8 @@ function TOCLink({
       href={`#${id}`}
       onClick={handleClick}
       className={`block py-1.5 text-[11px] font-bold transition-all duration-300 border-l-2 px-4 ${active
-        ? "text-emerald-500 border-emerald-500 bg-emerald-500/5 translate-x-1"
-        : "text-slate-500 border-transparent hover:text-slate-900 dark:hover:text-white"
+          ? "text-emerald-500 border-emerald-500 bg-emerald-500/5 translate-x-1"
+          : "text-slate-500 border-transparent hover:text-slate-900 dark:hover:text-white"
         }`}
     >
       {children}

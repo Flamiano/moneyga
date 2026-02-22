@@ -18,7 +18,6 @@ import {
   ChevronDown,
   Quote,
   Send,
-  Smartphone,
 } from "lucide-react";
 import Navbar from "./comps/navbar/page";
 import Footer from "./comps/footer/page";
@@ -27,6 +26,7 @@ export default function Home() {
   const [userCount, setUserCount] = useState<number | null>(null);
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [isAndroid, setIsAndroid] = useState(false);
 
   // Form State
   const [email, setEmail] = useState("");
@@ -39,6 +39,12 @@ export default function Home() {
 
   useEffect(() => {
     fetchInitialData();
+
+    // Strict Android Detection
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    if (/android/i.test(userAgent)) {
+      setIsAndroid(true);
+    }
   }, []);
 
   async function fetchInitialData() {
@@ -103,12 +109,6 @@ export default function Home() {
     }
   };
 
-  const maskEmail = (email: string) => {
-    const [name, domain] = email.split("@");
-    if (name.length <= 2) return email;
-    return `${name[0]}*******${name[name.length - 1]}@${domain}`;
-  };
-
   const getFirstName = (fullName: string) => {
     return fullName ? fullName.split(" ")[0] : "User";
   };
@@ -130,7 +130,7 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              Designed for Android
+              {isAndroid ? "Android Device Ready" : "Android Exclusive App"}
             </div>
             <h1 className="text-5xl lg:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">
               Master Your <br />
@@ -140,17 +140,24 @@ export default function Home() {
               The #1 manual expense tracker for Filipinos. Build financial
               discipline with MoneyGa's intuitive Android interface.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
-              {/* Direct Download Link - Styled as a Button */}
-              <a
-                href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
-                download="MoneyGa.apk"
-                className="group flex items-center justify-center gap-3 bg-slate-950 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 hover:shadow-emerald-500/20"
-              >
-                <Download className="w-5 h-5 group-hover:animate-bounce" />
-                <span className="tracking-tight">GET STARTED</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              {/* --- ONLY VISIBLE ON ANDROID --- */}
+              {isAndroid ? (
+                <a
+                  href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                  download="MoneyGa.apk"
+                  className="group flex items-center justify-center gap-3 bg-slate-950 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 hover:shadow-emerald-500/20"
+                >
+                  <Download className="w-5 h-5 group-hover:animate-bounce" />
+                  <span className="tracking-tight">DOWNLOAD APK</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </a>
+              ) : (
+                <div className="px-6 py-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/30 rounded-2xl text-amber-700 dark:text-amber-400 text-sm font-bold">
+                  Open on your Android phone to download.
+                </div>
+              )}
 
               {/* Registered Users Count */}
               <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm">
@@ -291,7 +298,6 @@ export default function Home() {
         {/* --- SHARE EXPERIENCE SECTION --- */}
         <section className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
           <div className="bg-white dark:bg-[#0c0c0c] border border-slate-200 dark:border-white/5 rounded-[2.5rem] lg:rounded-[3.5rem] overflow-hidden flex flex-col lg:flex-row shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none">
-            {/* Left Side: The Form - Compacted */}
             <div className="w-full lg:w-5/12 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-white/5">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
@@ -340,8 +346,8 @@ export default function Home() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className={`p-3 rounded-xl text-[10px] font-bold flex items-center gap-2 ${status.type === "success"
-                      ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-red-500/10 text-red-600"
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : "bg-red-500/10 text-red-600"
                       }`}
                   >
                     {status.type === "success" ? (
@@ -363,12 +369,9 @@ export default function Home() {
               </form>
             </div>
 
-            {/* Right Side: Visuals - Scaled for LG Desktop */}
             <div className="w-full lg:w-7/12 bg-slate-50/50 dark:bg-black/40 p-8 flex flex-col justify-center items-center relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full" />
-
               <div className="relative w-full max-w-sm h-[380px] lg:h-[400px] flex items-center justify-center scale-90 lg:scale-100">
-                {/* Secondary Phone */}
                 <motion.div
                   initial={{ opacity: 0, x: 40, rotateY: -25 }}
                   whileInView={{ opacity: 0.2, x: 50, rotateY: -25 }}
@@ -383,7 +386,6 @@ export default function Home() {
                   </div>
                 </motion.div>
 
-                {/* Primary Phone */}
                 <motion.div
                   initial={{ opacity: 0, x: -20, rotateY: 15 }}
                   whileInView={{ opacity: 1, x: 0, rotateY: 15 }}
@@ -422,7 +424,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- FEEDBACK DISPLAY GRID - Compact Layout --- */}
+        {/* --- FEEDBACK DISPLAY GRID --- */}
         <section className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-100 dark:border-white/5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
@@ -459,7 +461,6 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          {/* Load More Button - Compacted */}
           {feedbacks.length > visibleCount && (
             <div className="mt-12 text-center">
               <button
@@ -478,13 +479,22 @@ export default function Home() {
             <h2 className="text-4xl lg:text-6xl font-black mb-8 relative z-10">
               Start your Ipon journey <br /> with MoneyGa.
             </h2>
-            <a
-              href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
-              download="MoneyGa.apk"
-              className="inline-block relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl"
-            >
-              Download for Android
-            </a>
+            <div className="relative z-10 flex flex-col items-center gap-4">
+              {/* --- ONLY VISIBLE ON ANDROID --- */}
+              {isAndroid ? (
+                <a
+                  href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                  download="MoneyGa.apk"
+                  className="inline-block relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl active:scale-95"
+                >
+                  Download for Android
+                </a>
+              ) : (
+                <p className="text-emerald-50/70 text-[10px] font-bold uppercase tracking-widest">
+                  Installation available on Android devices only
+                </p>
+              )}
+            </div>
           </div>
         </section>
 
