@@ -484,6 +484,7 @@ export default function Home() {
               {isAndroid ? (
                 <a
                   href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                  
                   download="MoneyGa.apk"
                   className="inline-block relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl active:scale-95"
                 >
