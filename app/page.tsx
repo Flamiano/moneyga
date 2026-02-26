@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Quote,
   Send,
+  Smartphone
 } from "lucide-react";
 import Navbar from "./comps/navbar/page";
 import Footer from "./comps/footer/page";
@@ -37,14 +38,14 @@ export default function Home() {
     msg: string;
   } | null>(null);
 
+  const APK_URL = "https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk";
+
   useEffect(() => {
     fetchInitialData();
 
-    // Strict Android Detection
-    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-    if (/android/i.test(userAgent)) {
-      setIsAndroid(true);
-    }
+    // Enhanced Android Detection
+    const ua = navigator.userAgent.toLowerCase();
+    setIsAndroid(/android/.test(ua));
   }, []);
 
   async function fetchInitialData() {
@@ -62,6 +63,12 @@ export default function Home() {
       setFeedbacks(data);
     }
   }
+
+  const handleDownload = (e: React.MouseEvent) => {
+    // This ensures the link is handled as a download without changing the URL or opening a tab
+    // The 'download' attribute on the <a> tag handles this in most modern browsers.
+    console.log("Starting Download...");
+  };
 
   const handleSubmitFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,143 +124,144 @@ export default function Home() {
     <>
       <Navbar />
       <main className="min-h-screen bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-slate-100 selection:bg-emerald-100 dark:selection:bg-emerald-900/30 overflow-x-hidden font-sans">
+
         {/* --- HERO SECTION --- */}
-        <section className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-30 pb-20 lg:pt-40 lg:pb-32 flex flex-col lg:flex-row items-center gap-16">
+        <section className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-32 pb-20 lg:pt-48 lg:pb-32 flex flex-col lg:flex-row items-center gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
             className="w-full lg:w-1/2 text-center lg:text-left z-10"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-xs font-bold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase bg-emerald-50 dark:bg-emerald-900/20 rounded-full">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 text-[10px] font-black tracking-[0.2em] text-emerald-600 dark:text-emerald-400 uppercase bg-emerald-50 dark:bg-emerald-500/10 rounded-full border border-emerald-100 dark:border-emerald-500/20">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              {isAndroid ? "Android Device Ready" : "Android Exclusive App"}
+              {isAndroid ? "Compatible with your device" : "Android Exclusive"}
             </div>
-            <h1 className="text-5xl lg:text-8xl font-black tracking-tighter mb-6 leading-[0.9]">
+
+            <h1 className="text-6xl lg:text-[100px] font-black tracking-tighter mb-8 leading-[0.85] lg:-ml-1">
               Master Your <br />
-              <span className="text-emerald-600">Peso</span> Flow.
+              <span className="text-emerald-600 dark:text-emerald-500">Peso</span> Flow.
             </h1>
-            <p className="text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-md mx-auto lg:mx-0 leading-relaxed">
+
+            <p className="text-lg lg:text-xl text-slate-500 dark:text-slate-400 mb-10 max-w-md mx-auto lg:mx-0 leading-relaxed font-medium">
               The #1 manual expense tracker for Filipinos. Build financial
               discipline with MoneyGa's intuitive Android interface.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
-              {/* --- ONLY VISIBLE ON ANDROID --- */}
+            <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start items-center">
               {isAndroid ? (
                 <a
-                  href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
+                  href={APK_URL}
                   download="MoneyGa.apk"
-                  className="group flex items-center justify-center gap-3 bg-slate-950 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl active:scale-95 hover:shadow-emerald-500/20"
+                  onClick={handleDownload}
+                  className="group flex items-center justify-center gap-4 bg-slate-950 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-10 py-5 rounded-2xl font-black transition-all shadow-2xl hover:shadow-emerald-500/40 active:scale-95"
                 >
-                  <Download className="w-5 h-5 group-hover:animate-bounce" />
-                  <span className="tracking-tight">DOWNLOAD APK</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <Download className="w-6 h-6 group-hover:animate-bounce" />
+                  <div className="text-left leading-tight">
+                    <span className="block text-[10px] opacity-70 uppercase tracking-widest">Version 1.0.0</span>
+                    <span className="text-lg tracking-tight">DOWNLOAD APK</span>
+                  </div>
                 </a>
               ) : (
-                <div className="px-6 py-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/30 rounded-2xl text-amber-700 dark:text-amber-400 text-sm font-bold">
-                  Open on your Android phone to download.
+                <div className="flex flex-col items-center lg:items-start gap-2">
+                  <div className="px-8 py-5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-400 text-sm font-bold flex items-center gap-3">
+                    <Smartphone className="w-5 h-5 opacity-50" />
+                    Open on Android to Install
+                  </div>
                 </div>
               )}
 
-              {/* Registered Users Count */}
-              <div className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm">
-                <div className="flex -space-x-2">
-                  {["bg-emerald-500", "bg-blue-500", "bg-amber-500"].map((color, i) => (
-                    <div
-                      key={i}
-                      className={`w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 ${color} flex items-center justify-center shadow-sm`}
-                    >
-                      <User className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 shadow-sm">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-4 border-white dark:border-[#0a0a0a] bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                      <User className="w-5 h-5 text-slate-400" />
                     </div>
                   ))}
                 </div>
-                <div className="text-sm font-bold">
-                  <span className="text-emerald-600 dark:text-emerald-400">
+                <div className="text-sm">
+                  <div className="font-black text-emerald-600 dark:text-emerald-400 text-base leading-none">
                     {userCount?.toLocaleString() || "..."}
-                  </span>{" "}
-                  Registered
+                  </div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pinoys Saving</div>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          <div className="w-full lg:w-1/2 relative flex justify-center items-center h-[500px]">
-            <div className="absolute inset-0 bg-emerald-500/10 dark:bg-emerald-500/5 blur-[120px] rounded-full" />
+          {/* --- HERO VISUAL --- */}
+          <div className="w-full lg:w-1/2 relative flex justify-center items-center h-[500px] lg:h-[700px]">
+            <div className="absolute inset-0 bg-emerald-500/20 dark:bg-emerald-500/10 blur-[140px] rounded-full" />
+
             <motion.div
-              initial={{ y: 20, rotate: -5 }}
-              animate={{ y: 0, rotate: -8 }}
-              className="w-48 lg:w-64 aspect-[9/19.5] bg-slate-950 rounded-[2.5rem] p-1.5 shadow-2xl z-20 border border-white/10"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="relative w-56 lg:w-72 aspect-[9/19] bg-slate-950 rounded-[3rem] p-2 shadow-[0_0_100px_rgba(16,185,129,0.1)] z-20 border-4 border-slate-800 dark:border-white/10"
             >
-              <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-slate-900">
-                <img
-                  src="/img/home.png"
-                  alt="App Home"
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-full h-full rounded-[2.5rem] overflow-hidden bg-slate-900">
+                <img src="/img/home.png" alt="App Home" className="w-full h-full object-cover" />
               </div>
             </motion.div>
+
             <motion.div
-              initial={{ y: -20, rotate: 5 }}
-              animate={{ y: 0, rotate: 8 }}
-              className="absolute w-44 lg:w-56 aspect-[9/19.5] bg-slate-950 rounded-[2.2rem] p-1.5 shadow-2xl z-10 border border-white/10 ml-40 mt-20 opacity-50 lg:opacity-100"
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 100, opacity: 0.4 }}
+              className="absolute w-48 lg:w-64 aspect-[9/19] bg-slate-950 rounded-[2.5rem] p-2 shadow-2xl z-10 border border-white/5 mt-20 hidden lg:block"
             >
-              <div className="w-full h-full rounded-[2rem] overflow-hidden bg-slate-900">
-                <img
-                  src="/img/income.png"
-                  alt="Analytics"
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-slate-900 grayscale">
+                <img src="/img/income.png" alt="Analytics" className="w-full h-full object-cover" />
               </div>
             </motion.div>
           </div>
         </section>
 
         {/* --- SECURITY SECTION --- */}
-        <section className="py-24 bg-slate-50 dark:bg-white/[0.02] border-y border-slate-100 dark:border-white/5">
+        <section className="py-32 bg-slate-50 dark:bg-[#0d0d0d] border-y border-slate-100 dark:border-white/5 relative">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
-              <div className="w-full lg:w-1/2 space-y-8">
-                <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-500/20 rounded-2xl flex items-center justify-center">
-                  <Lock className="w-7 h-7 text-emerald-600" />
+            <div className="flex flex-col lg:flex-row items-center gap-20">
+              <div className="w-full lg:w-1/2 space-y-10 text-center lg:text-left">
+                <div className="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/20 mx-auto lg:mx-0">
+                  <Lock className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-4xl font-black tracking-tight">
-                  Your data is yours. <br />
-                  <span className="text-emerald-500">Fully Encrypted.</span>
-                </h2>
-                <p className="text-slate-500 dark:text-slate-400 text-lg">
-                  Powered by **Supabase Auth & PostgreSQL**, we ensure your
-                  financial records are invisible even to us.
-                </p>
-                <ul className="space-y-4">
+                <div>
+                  <h2 className="text-4xl lg:text-6xl font-black tracking-tight mb-6">
+                    Privacy is <span className="text-emerald-500">Default.</span>
+                  </h2>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg lg:text-xl font-medium max-w-lg mx-auto lg:mx-0">
+                    Your data is strictly between you and your phone. We use industry-standard encryption so even we can't see your budget.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
-                    "AES-256 Row Level Encryption",
-                    "Masked Personal Identity Records",
-                    "Secure Local Data Storage",
-                    "No Third-Party Financial Access",
+                    "AES-256 Encryption",
+                    "Row Level Security",
+                    "Supabase Protected",
+                    "No Data Selling",
                   ].map((item, i) => (
-                    <li
-                      key={i}
-                      className="flex items-center gap-3 font-semibold text-sm"
-                    >
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />{" "}
-                      {item}
-                    </li>
+                    <div key={i} className="flex items-center gap-3 p-4 bg-white dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                      <span className="font-bold text-sm">{item}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
+
               <div className="w-full lg:w-1/2">
-                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Admin Panel Preview
+                <div className="bg-white dark:bg-black rounded-[2.5rem] p-10 border border-slate-200 dark:border-white/10 shadow-2xl relative">
+                  <div className="absolute top-8 right-10">
+                    <ShieldCheck className="w-6 h-6 text-emerald-500 animate-pulse" />
+                  </div>
+                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">
+                    Encrypted Database Profile
                   </h4>
-                  <div className="space-y-6">
-                    <DataField label="Name" value="J**** F*****" />
-                    <DataField label="Number" value="09*******" />
-                    <DataField label="Email" value="j*******@gmail.com" />
+                  <div className="space-y-8">
+                    <DataField label="Identity" value="********-****-****-****" />
+                    <DataField label="Wallet Balance" value="₱ **,***.**" />
+                    <DataField label="Personal Email" value="u****@example.com" />
                   </div>
                 </div>
               </div>
@@ -261,17 +269,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- CORE FEATURES GRID --- */}
+        {/* --- CORE FEATURES --- */}
         <section className="max-w-7xl mx-auto px-6 py-32">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl lg:text-5xl font-black mb-4">
-              Built for Financial Discipline.
-            </h2>
-            <p className="text-slate-500 dark:text-slate-400">
-              Everything you need to track every Centavo.
-            </p>
+          <div className="text-center mb-24">
+            <h2 className="text-4xl lg:text-6xl font-black mb-6">Built for Discipline.</h2>
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">Every feature is designed to stop impulsive spending.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <FeatureCard
               icon={<BarChart3 />}
               title="Visual Reports"
@@ -295,165 +299,108 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- SHARE EXPERIENCE SECTION --- */}
-        <section className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-          <div className="bg-white dark:bg-[#0c0c0c] border border-slate-200 dark:border-white/5 rounded-[2.5rem] lg:rounded-[3.5rem] overflow-hidden flex flex-col lg:flex-row shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none">
-            <div className="w-full lg:w-5/12 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-slate-100 dark:border-white/5">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                  <MessageSquare className="text-white w-6 h-6" />
+        {/* --- FEEDBACK FORM --- */}
+        <section className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+          <div className="bg-white dark:bg-[#0c0c0c] border border-slate-200 dark:border-white/5 rounded-[3.5rem] overflow-hidden flex flex-col lg:flex-row shadow-2xl shadow-slate-200/50 dark:shadow-none">
+            <div className="w-full lg:w-5/12 p-10 lg:p-16">
+              <div className="flex items-center gap-5 mb-10">
+                <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/30">
+                  <MessageSquare className="text-white w-7 h-7" />
                 </div>
                 <div>
-                  <h2 className="text-2xl lg:text-3xl font-black tracking-tight italic text-slate-900 dark:text-white leading-none">
-                    Share Experience
-                  </h2>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">
-                    Community feedback drive growth.
-                  </p>
+                  <h2 className="text-3xl font-black tracking-tight italic leading-none">Voices.</h2>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Community Insights</p>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmitFeedback} className="space-y-4">
-                <div className="group">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 group-focus-within:text-emerald-500 transition-colors mb-1.5 block ml-1">
-                    Registered Email
-                  </label>
+              <form onSubmit={handleSubmitFeedback} className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block ml-1">Email (Use app email)</label>
                   <input
                     required
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email@example.com"
-                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 p-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-medium text-sm text-slate-900 dark:text-white"
+                    placeholder="name@gmail.com"
+                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-4 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm outline-none"
                   />
                 </div>
-                <div className="group">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 group-focus-within:text-emerald-500 transition-colors mb-1.5 block ml-1">
-                    Message
-                  </label>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block ml-1">Message</label>
                   <textarea
                     required
-                    rows={3}
+                    rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us what you love..."
-                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 p-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none font-medium text-sm text-slate-900 dark:text-white"
+                    placeholder="How did MoneyGa help you today?"
+                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-4 rounded-2xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all font-bold text-sm outline-none resize-none"
                   />
                 </div>
 
                 {status && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className={`p-3 rounded-xl text-[10px] font-bold flex items-center gap-2 ${status.type === "success"
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : "bg-red-500/10 text-red-600"
-                      }`}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={`p-4 rounded-2xl text-xs font-black flex items-center gap-3 ${status.type === "success" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"}`}
                   >
-                    {status.type === "success" ? (
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                    ) : (
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                    )}
+                    {status.type === "success" ? <CheckCircle2 className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
                     {status.msg}
                   </motion.div>
                 )}
 
                 <button
                   disabled={loading}
-                  className="group w-full bg-slate-900 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-500 text-white p-4 rounded-xl font-black text-xs flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95"
+                  className="w-full bg-slate-950 dark:bg-emerald-600 hover:bg-emerald-500 text-white py-5 rounded-2xl font-black text-sm flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl hover:shadow-emerald-500/20 disabled:opacity-50"
                 >
-                  {loading ? "Sending..." : "POST FEEDBACK"}
-                  <Send className="w-3.5 h-3.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  {loading ? "SENDING..." : "POST TO WALL"}
+                  <Send className="w-4 h-4" />
                 </button>
               </form>
             </div>
 
-            <div className="w-full lg:w-7/12 bg-slate-50/50 dark:bg-black/40 p-8 flex flex-col justify-center items-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full" />
-              <div className="relative w-full max-w-sm h-[380px] lg:h-[400px] flex items-center justify-center scale-90 lg:scale-100">
+            <div className="w-full lg:w-7/12 bg-slate-50 dark:bg-black/50 p-10 flex items-center justify-center">
+              <div className="relative">
                 <motion.div
-                  initial={{ opacity: 0, x: 40, rotateY: -25 }}
-                  whileInView={{ opacity: 0.2, x: 50, rotateY: -25 }}
-                  className="absolute w-40 aspect-[9/19.5] bg-slate-950 rounded-[2rem] p-1 shadow-2xl border border-white/5 hidden sm:block"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                  className="w-56 lg:w-64 aspect-[9/19] bg-slate-950 rounded-[3rem] p-2 border-4 border-slate-800 dark:border-white/10 shadow-2xl overflow-hidden"
                 >
-                  <div className="w-full h-full rounded-[1.8rem] overflow-hidden">
-                    <img
-                      src="/img/login.png"
-                      alt="Login"
-                      className="w-full h-full object-cover grayscale"
-                    />
-                  </div>
+                  <img src="/img/register.png" alt="Register UI" className="w-full h-full object-cover" />
                 </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: -20, rotateY: 15 }}
-                  whileInView={{ opacity: 1, x: 0, rotateY: 15 }}
-                  className="relative w-44 lg:w-48 aspect-[9/19.5] bg-slate-950 rounded-[2.2rem] p-1 shadow-2xl z-20 border border-white/20"
-                >
-                  <div className="w-full h-full rounded-[2rem] overflow-hidden bg-slate-900 border border-white/5">
-                    <img
-                      src="/img/register.png"
-                      alt="Register"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  <motion.div
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                    className="absolute -right-6 top-1/4 bg-white dark:bg-emerald-500 p-3 rounded-2xl shadow-xl z-30 flex items-center gap-2 border border-slate-100 dark:border-none"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-white" />
-                    <span className="text-[9px] font-black text-slate-900 dark:text-white uppercase">
-                      Verified
-                    </span>
-                  </motion.div>
-                </motion.div>
-              </div>
-
-              <div className="mt-6 text-center z-10">
-                <div className="inline-flex items-center gap-2 text-[9px] font-black tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-4 py-1.5 rounded-full mb-2 uppercase">
-                  Material You
+                <div className="absolute -right-8 bottom-20 bg-emerald-500 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase shadow-2xl">
+                  100% Free
                 </div>
-                <p className="text-[10px] font-bold text-slate-400 max-w-[180px]">
-                  Seamless notch-free experience.
-                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* --- FEEDBACK DISPLAY GRID --- */}
-        <section className="max-w-7xl mx-auto px-6 py-12 border-t border-slate-100 dark:border-white/5">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* --- FEEDBACK GRID --- */}
+        <section className="max-w-7xl mx-auto px-6 py-20 border-t border-slate-100 dark:border-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
               {feedbacks.slice(0, visibleCount).map((fb) => (
                 <motion.div
                   layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   key={fb.id}
-                  className="relative bg-white dark:bg-[#111] p-6 lg:p-8 rounded-[2rem] border border-slate-200/60 dark:border-white/5 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                  className="bg-white dark:bg-[#111] p-8 rounded-[2.5rem] border border-slate-100 dark:border-white/5 flex flex-col justify-between hover:border-emerald-500/30 transition-colors"
                 >
                   <div>
-                    <Quote className="text-emerald-500 w-8 h-8 opacity-20 group-hover:opacity-100 transition-all mb-4" />
-                    <p className="text-md font-bold leading-snug mb-6 text-slate-800 dark:text-slate-200 italic">
+                    <Quote className="text-emerald-500 w-10 h-10 opacity-20 mb-6" />
+                    <p className="text-lg font-bold leading-relaxed text-slate-800 dark:text-slate-200 italic mb-8">
                       "{fb.message}"
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 border-t border-slate-50 dark:border-white/5 pt-6">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-md">
+                  <div className="flex items-center gap-4 pt-6 border-t border-slate-50 dark:border-white/5">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white font-black text-lg">
                       {fb.profiles?.full_name?.charAt(0) || "U"}
                     </div>
-                    <div className="overflow-hidden">
-                      <h4 className="font-black text-xs text-slate-900 dark:text-white truncate">
-                        {getFirstName(fb.profiles?.full_name)}
-                      </h4>
-                      <p className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter">
-                        {new Date(fb.created_at).toLocaleDateString()}
-                      </p>
+                    <div>
+                      <h4 className="font-black text-sm">{getFirstName(fb.profiles?.full_name)}</h4>
+                      <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase">{new Date(fb.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -462,38 +409,44 @@ export default function Home() {
           </div>
 
           {feedbacks.length > visibleCount && (
-            <div className="mt-12 text-center">
+            <div className="mt-16 text-center">
               <button
                 onClick={() => setVisibleCount((prev) => prev + 6)}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-white/5 text-white dark:text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white/5 text-white dark:text-emerald-400 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all"
               >
-                LOAD MORE STORIES <ChevronDown className="w-4 h-4" />
+                LOAD MORE <ChevronDown className="w-4 h-4" />
               </button>
             </div>
           )}
         </section>
 
-        {/* --- CALL TO ACTION --- */}
-        <section className="max-w-5xl mx-auto px-6 pb-32">
-          <div className="bg-emerald-600 rounded-[3rem] p-12 lg:p-20 text-center text-white relative overflow-hidden shadow-2xl">
-            <h2 className="text-4xl lg:text-6xl font-black mb-8 relative z-10">
-              Start your Ipon journey <br /> with MoneyGa.
+        {/* --- FINAL CTA --- */}
+        <section className="max-w-5xl mx-auto px-6 pb-40">
+          <div className="bg-emerald-600 rounded-[4rem] p-12 lg:p-28 text-center text-white relative overflow-hidden shadow-[0_40px_100px_rgba(16,185,129,0.3)]">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+              <div className="absolute top-10 left-10 text-8xl font-black rotate-12">₱</div>
+              <div className="absolute bottom-10 right-10 text-8xl font-black -rotate-12">₱</div>
+            </div>
+
+            <h2 className="text-5xl lg:text-7xl font-black mb-10 relative z-10 tracking-tighter">
+              Build your Ipon habit.
             </h2>
-            <div className="relative z-10 flex flex-col items-center gap-4">
-              {/* --- ONLY VISIBLE ON ANDROID --- */}
+
+            <div className="relative z-10 flex flex-col items-center gap-6">
               {isAndroid ? (
                 <a
-                  href="https://github.com/Flamiano/moneyga-app/releases/download/v1.0.0/MoneyGa.apk"
-                  
+                  href={APK_URL}
                   download="MoneyGa.apk"
-                  className="inline-block relative z-10 bg-white text-emerald-600 px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl active:scale-95"
+                  className="bg-white text-emerald-600 px-12 py-6 rounded-3xl font-black text-xl hover:scale-105 transition-transform shadow-2xl active:scale-95 flex items-center gap-3"
                 >
-                  Download for Android
+                  <Download className="w-6 h-6" />
+                  Install MoneyGa Now
                 </a>
               ) : (
-                <p className="text-emerald-50/70 text-[10px] font-bold uppercase tracking-widest">
-                  Installation available on Android devices only
-                </p>
+                <div className="space-y-4">
+                  <p className="text-emerald-100 font-bold max-w-sm">MoneyGa is currently only available for Android users.</p>
+                  <div className="inline-block bg-emerald-700/50 backdrop-blur-md px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest">iOS Version Coming Soon</div>
+                </div>
               )}
             </div>
           </div>
@@ -507,25 +460,17 @@ export default function Home() {
 
 // --- HELPER COMPONENTS ---
 
-function FeatureCard({
-  icon,
-  title,
-  desc,
-}: {
-  icon: any;
-  title: string;
-  desc: string;
-}) {
+function FeatureCard({ icon, title, desc }: { icon: any; title: string; desc: string; }) {
   return (
     <motion.div
-      whileHover={{ y: -10 }}
-      className="p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-xl transition-all"
+      whileHover={{ y: -12 }}
+      className="p-10 bg-white dark:bg-[#111] rounded-[3rem] border border-slate-100 dark:border-white/5 shadow-sm hover:shadow-2xl transition-all"
     >
-      <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 text-emerald-600">
-        {React.cloneElement(icon, { className: "w-7 h-7" })}
+      <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-500/10 rounded-[1.5rem] flex items-center justify-center mb-8 text-emerald-600">
+        {React.cloneElement(icon, { className: "w-8 h-8" })}
       </div>
-      <h3 className="text-xl font-bold mb-3">{title}</h3>
-      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">
+      <h3 className="text-2xl font-black mb-4">{title}</h3>
+      <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
         {desc}
       </p>
     </motion.div>
@@ -534,15 +479,15 @@ function FeatureCard({
 
 function DataField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+    <div className="flex flex-col gap-2">
+      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
         {label}
       </span>
-      <div className="flex items-center justify-between bg-slate-50 dark:bg-black/20 p-4 rounded-xl border border-slate-100 dark:border-white/5">
-        <span className="font-mono text-slate-700 dark:text-slate-200">
+      <div className="flex items-center justify-between bg-slate-50 dark:bg-white/5 p-5 rounded-2xl border border-slate-100 dark:border-white/5">
+        <span className="font-mono text-sm font-bold text-slate-700 dark:text-emerald-500">
           {value}
         </span>
-        <EyeOff className="w-4 h-4 text-slate-300" />
+        <EyeOff className="w-4 h-4 text-slate-300 dark:text-white/20" />
       </div>
     </div>
   );
